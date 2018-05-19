@@ -270,28 +270,22 @@ function draw() {
 }*/
 
 var side = 32;
-var canvasHeight = 16;
-var canvasWidth = 16;
-var obstacles = [{ x: 10 * side, y: 10 * side }];
-var golds = [{ x: 5 * side, y: 6 * side }];
-var players = [{ x: 0, y: 0 }]
-var playerX = 0;
-var playerY = 0;
+var canvasHeight = 16;//*side
+var canvasWidth = 16;//*side
+var obstacles = [];
+var golds = [];
+var bases = [{ x: 0, y: (canvasHeight - 2) * side }]
+//var players = [{ x: 2, y: (canvasHeight - 3) * side }]
+var base = { x: 0, y: (canvasHeight - 2) * side };
+var playerX = 2 * side;
+var playerY = 13 * side;
 
 var playerHasGold = false;
 
-//random obstacles
-for (var i = 0; i < 4; ++i) {
-    var height = canvasHeight * side - side;
-    var width = canvasWidth * side - side;
-    var x = Math.round(Math.random() * width);
-    var y = Math.round(Math.random() * height);
-    inside(obstacles);
-    inside(players);
+//random obstacles & golds
+getRandObj(obstacles, 4);
+getRandObj(golds, 4)
 
-    obstacles.push({ x: x * side, y: y * side });
-
-}
 
 
 function setup() {
@@ -305,18 +299,19 @@ function draw() {
 
     drawResources(); // Draw the resources
 
+
     // Add elses in this if contruction to lock diagonal movement
     if ((keyIsDown(RIGHT_ARROW) || keyIsDown(68)) && playerX < (width - side)) {
         for (var coords of obstacles) {
             if (Collision_right(coords)) return;
         }
-        for (var i in golds) {
-            var coords = golds[i];
+        for (var coords of golds) {
             if (Collision_right(coords)) {
                 playerHasGold = true;
                 golds.splice(i, 1);
             }
         }
+
         playerX += side / 8;
     }
     if ((keyIsDown(LEFT_ARROW) || keyIsDown(65)) && playerX > 0) {
@@ -329,6 +324,12 @@ function draw() {
                 playerHasGold = true;
                 golds.splice(i, 1);
             }
+        }
+        var base1 = { x: base.x + side, y: base.y };
+        var base2 = { x: base.x + side, y: base.y + side };
+        if ( Collision_left(base1) || Collision_left(base2)) {
+            playerHasGold = false;
+            return;
         }
         playerX -= side / 8;
     }
@@ -356,6 +357,19 @@ function draw() {
                 golds.splice(i, 1);
             }
         }
+        var base1 = { x: base.x + side, y: base.y };
+
+        if (Collision_down(base) || Collision_down(base1)) {
+            playerHasGold = false;
+            return;
+        }
         playerY += side / 8;
     }
+
 }
+// var base1 = { x: base.x + side, y: base.y };
+// var base2 = { x: base.x + side, y: base.y + side };
+// if (Collision_right(base) || Collision_right(base1) || Collision_right(base2)) {
+
+
+// }
