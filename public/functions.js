@@ -1,9 +1,10 @@
 function drawPlayer() { // Draw the player
     fill('red');
-    rect(playerX, playerY, side, side);
+    rect(player.x, player.y, side, side);
+    //image(img, player.x, player.y);
     if (playerHasGold) {
         fill(255, 223, 0); // gold's color
-        rect(playerX + (side / 8), playerY + (side / 8), side - (side / 4), side - (side / 4))
+        rect(player.x + (side / 8), player.y + (side / 8), side - (side / 4), side - (side / 4))
     }
 }
 
@@ -27,23 +28,42 @@ function inside(obj1, obj2) {
     var object1OY = obj1.y + (side / 2);
     var object2OX = obj2.x + (side / 2);
     var object2OY = obj2.y + (side / 2);
-    if (Math.abs((object2OX - object1OX) <= side) && Math.abs((object2OY - object1OY) <= side)) {
+    if (Math.abs(object2OX - object1OX) <= side && Math.abs(object2OY - object1OY) <= side) {
         return true;
     }
     return false;
 }
 function getRandObj(object, n) {
     for (var i = 0; i < n; ++i) {
-        var newX = Math.floor(Math.random() * canvasWidth);
-        var newY = Math.floor(Math.random() * canvasHeight);
-        object.push({ x: newX * side, y: newY * side });
+        var newX = Math.round(Math.random() * (canvasWidth - 1) * side);
+        var newY = Math.round(Math.random() * (canvasHeight - 1) * side);
+        var newObject = { x: newX, y: newY };
+        var ok = true;
+        if (inside(newObject, player) || inside(newObject, base)) {
+            --i;
+            continue;
+        }
+        for (var j in obstacles) {
+            if (inside(newObject, obstacles[j])) {
+                var ok = false;
+            }
+        }
+        for (var j in golds) {
+            if (inside(newObject, golds[j])) {
+                var ok = false;
+            }
+        }
+        if (ok) {
+            object.push({ x: newX, y: newY });
+        }
+        else { --i; }
     }
 }
 // function baseCollision() {
 //     var baseOX = bases[1].x + side;
 //     var baseOY = bases[1].y + side;
-//     var playerOX = playerX + (side/2);
-//     var playerOY = PlayerY + (side/2);
+//     var playerOX = player.x + (side/2);
+//     var playerOY = player.y + (side/2);
 //     if (Math.abs((baseOX - playerOX) <= 48) && Math.abs((baseOY - playerOY) <= 48)) {
 //         playerHasGold = false;
 //         return true;
@@ -55,8 +75,8 @@ function Collision_right(coords) {
     var obstacleX = coords.x;
     var obstacleY = coords.y;
 
-    var playerOX = playerX + (side / 2);
-    var playerOY = playerY + (side / 2);
+    var playerOX = player.x + (side / 2);
+    var playerOY = player.y + (side / 2);
 
     var objectOX = obstacleX + (side / 2);
     var objectOY = obstacleY + (side / 2);
@@ -73,8 +93,8 @@ function Collision_left(coords) {
     var obstacleX = coords.x;
     var obstacleY = coords.y;
 
-    var playerOX = playerX + (side / 2);
-    var playerOY = playerY + (side / 2);
+    var playerOX = player.x + (side / 2);
+    var playerOY = player.y + (side / 2);
 
     var objectOX = obstacleX + (side / 2);
     var objectOY = obstacleY + (side / 2);
@@ -91,8 +111,8 @@ function Collision_up(coords) {
     var obstacleX = coords.x;
     var obstacleY = coords.y;
 
-    var playerOX = playerX + (side / 2);
-    var playerOY = playerY + (side / 2);
+    var playerOX = player.x + (side / 2);
+    var playerOY = player.y + (side / 2);
 
     var objectOX = obstacleX + (side / 2);
     var objectOY = obstacleY + (side / 2);
@@ -109,8 +129,8 @@ function Collision_down(coords) {
     var obstacleX = coords.x;
     var obstacleY = coords.y;
 
-    var playerOX = playerX + (side / 2);
-    var playerOY = playerY + (side / 2);
+    var playerOX = player.x + (side / 2);
+    var playerOY = player.y + (side / 2);
 
     var objectOX = obstacleX + (side / 2);
     var objectOY = obstacleY + (side / 2);
@@ -122,4 +142,20 @@ function Collision_down(coords) {
     }
     return false;
 }
+function Base_Collision_left(base) {
 
+    var base1 = { x: base.x + side, y: base.y };
+    var base2 = { x: base.x + side, y: base.y + side };
+    if (Collision_left(base1) || Collision_left(base2)) {
+        return true;
+    }
+    return false;
+}
+function Base_Collision_down(base) {
+    var base1 = { x: base.x + side, y: base.y };
+
+    if (Collision_down(base) || Collision_down(base1)) {
+        return true;
+    }
+    return false;
+}

@@ -34,25 +34,25 @@ var side = 32;
 //             if (matrix[y][x] == 1) {
 //                 fill('red');
 
-//                 var playerX = x;
-//                 var playerY = y;
-//                 rect(playerX * side, playerY * side, side, side);
+//                 var player.x = x;
+//                 var player.y = y;
+//                 rect(player.x * side, player.y * side, side, side);
 
 //             }
 //         }
 //     }
 
 //     if (keyIsDown(40)) {
-//         matrix[playerY][playerX] = 0;
-//         matrix[(playerY+1)][playerX] = 1;
+//         matrix[player.y][player.x] = 0;
+//         matrix[(player.y+1)][player.x] = 1;
 
 //     }
 
 // }
 var canvasWidth = 20;
 var canvasHeight = 10;
-var playerX = 0;
-var playerY = 0;
+var player.x = 0;
+var player.y = 0;
 var obstacleX
 var obstacleY
 var playerOX 
@@ -74,7 +74,7 @@ for (var i = 0; i < 4; ++i) {
         if()
 
     }
-     if ((x > playerX && x < playerX + side) &&(y > playerY && y < playerY + side)) {
+     if ((x > player.x && x < player.x + side) &&(y > player.y && y < player.y + side)) {
          --i;
     }
     else { 
@@ -90,7 +90,7 @@ function setup() {
     background('#acacac');
     noStroke();
     fill('red');
-    rect(playerX, playerY, side, side);
+    rect(player.x, player.y, side, side);
     for (var i in obstacleArr) {
         obstacleX = obstacleArr[i][0];
         obstacleY = obstacleArr[i][1];
@@ -99,14 +99,14 @@ function setup() {
     }
 }
 function draw() {
-    playerOX = playerX + (side / 2);
-    playerOY = playerY + (side / 2);
+    playerOX = player.x + (side / 2);
+    playerOY = player.y + (side / 2);
 
     fill('red');
-    rect(playerX, playerY, side, side);
+    rect(player.x, player.y, side, side);
 
     if (keyIsDown(40) || keyIsDown(83)) {//down
-        if (playerY >= (canvasHeight * side - 64)) {
+        if (player.y >= (canvasHeight * side - 64)) {
             return;
         }
         for (var i in obstacleArr) {
@@ -117,12 +117,12 @@ function draw() {
             }
         }
         fill('#acacac');
-        rect(playerX, playerY, side, side);
+        rect(player.x, player.y, side, side);
 
-        playerY++;
+        player.y++;
     }
     else if (keyIsDown(38) || keyIsDown(87)) {//up
-        if (playerY <=0) {
+        if (player.y <=0) {
             return;
         }
         for (var i in obstacleArr) {
@@ -133,11 +133,11 @@ function draw() {
             }
         }
         fill('#acacac');
-        rect(playerX, playerY, side, side);
-        playerY--;
+        rect(player.x, player.y, side, side);
+        player.y--;
     }
     else if (keyIsDown(39) || keyIsDown(68)) {//right
-        if (playerX >= (canvasWidth * side - 64)) {
+        if (player.x >= (canvasWidth * side - 64)) {
             return;
         }
         for (var i in obstacleArr) {
@@ -148,11 +148,11 @@ function draw() {
             }
         }
         fill('#acacac');
-        rect(playerX, playerY, side, side);
-        playerX++;
+        rect(player.x, player.y, side, side);
+        player.x++;
     }
     else if (keyIsDown(37) || keyIsDown(65)) {//left
-        if (playerX <= 0) {
+        if (player.x <= 0) {
             return;
         }
         for (var i in obstacleArr) {
@@ -163,18 +163,18 @@ function draw() {
             }
         }
         fill('#acacac');
-        rect(playerX, playerY, side, side);
-        playerX--;
+        rect(player.x, player.y, side, side);
+        player.x--;
     }
     fill('red');
-    rect(playerX, playerY, side, side);
+    rect(player.x, player.y, side, side);
 
 }
 var side = 32;
 var obstacles = [{ x: 10 * side, y: 10 * side }];
 
-var playerX = 0;
-var playerY = 0;
+var player.x = 0;
+var player.y = 0;
 
 function setup() {
     createCanvas(side * 16, side * 16);
@@ -183,7 +183,7 @@ function setup() {
 function draw() {
     background('#acacac');
     fill('red');
-    rect(playerX, playerY, side, side);
+    rect(player.x, player.y, side, side);
     fill('black');
     for (var coords of obstacles) {
         rect(coords.x, coords.y, side, side);
@@ -194,8 +194,8 @@ function draw() {
             var obstacleX = coords.x;
             var obstacleY = coords.y;
 
-            var playerOX = playerX + (side / 2);
-            var playerOY = playerY + (side / 2);
+            var playerOX = player.x + (side / 2);
+            var playerOY = player.y + (side / 2);
 
             var objectOX = obstacleX + (side / 2);
             var objectOY = obstacleY + (side / 2);
@@ -206,16 +206,16 @@ function draw() {
                 }
             }
         }
-        playerX += side / 8;
+        player.x += side / 8;
     }
     else if (keyIsDown(LEFT_ARROW) || keyIsDown(65)) {
         for (var coords of obstacles) {
             var obstacleX = coords.x;
             var obstacleY = coords.y;
 
-            var playerOX = playerX + (side / 2);
+            var playerOX = player.x + (side / 2);
 
-            var playerOY = playerY + (side / 2);
+            var playerOY = player.y + (side / 2);
 
             var objectOX = obstacleX + (side / 2);
 
@@ -227,15 +227,15 @@ function draw() {
                 }
             }
         }
-        playerX -= side / 8;
+        player.x -= side / 8;
     }
     else if (keyIsDown(UP_ARROW) || keyIsDown(87)) {
         for (var coords of obstacles) {
             var obstacleX = coords.x;
             var obstacleY = coords.y;
 
-            var playerOX = playerX + (side / 2);
-            var playerOY = playerY + (side / 2);
+            var playerOX = player.x + (side / 2);
+            var playerOY = player.y + (side / 2);
 
             var objectOX = obstacleX + (side / 2);
             var objectOY = obstacleY + (side / 2);
@@ -246,15 +246,15 @@ function draw() {
                 }
             }
         }
-        playerY -= side / 8;
+        player.y -= side / 8;
     }
     else if (keyIsDown(DOWN_ARROW) || keyIsDown(83)) {
         for (var coords of obstacles) {
             var obstacleX = coords.x;
             var obstacleY = coords.y;
 
-            var playerOX = playerX + (side / 2);
-            var playerOY = playerY + (side / 2);
+            var playerOX = player.x + (side / 2);
+            var playerOY = player.y + (side / 2);
 
             var objectOX = obstacleX + (side / 2);
             var objectOY = obstacleY + (side / 2);
@@ -265,31 +265,37 @@ function draw() {
                 }
             }
         }
-        playerY += side / 8;
+        player.y += side / 8;
     }
 }*/
 
 var side = 32;
-var canvasHeight = 16;//*side
+var canvasHeight = 10;//*side
 var canvasWidth = 16;//*side
 var obstacles = [];
 var golds = [];
 var bases = [{ x: 0, y: (canvasHeight - 2) * side }]
 //var players = [{ x: 2, y: (canvasHeight - 3) * side }]
 var base = { x: 0, y: (canvasHeight - 2) * side };
-var playerX = 2 * side;
-var playerY = 13 * side;
-
+// var player.x = 2 * side;
+// var playerY = 13 * side;
+var player = { x: 2 * side, y: (canvasHeight - 1) * side }
 var playerHasGold = false;
+var score = 0;
+var scoreP = document.getElementById("scoreP");
+//var socket = io.connect('http://localhost:3000');
 
 //random obstacles & golds
-getRandObj(obstacles, 4);
+getRandObj(obstacles, 8);
 getRandObj(golds, 4)
 
 
+// function preload() {
+//     img = loadImage('../gui/truck/default.png');
+//   }
 
 function setup() {
-    createCanvas(canvasHeight * side, canvasWidth * side);
+    createCanvas(canvasWidth * side, canvasHeight * side);
 }
 
 function draw() {
@@ -299,77 +305,109 @@ function draw() {
 
     drawResources(); // Draw the resources
 
-
     // Add elses in this if contruction to lock diagonal movement
-    if ((keyIsDown(RIGHT_ARROW) || keyIsDown(68)) && playerX < (width - side)) {
+    if ((keyIsDown(RIGHT_ARROW) || keyIsDown(68)) && player.x < (width - side)) {
         for (var coords of obstacles) {
             if (Collision_right(coords)) return;
         }
-        for (var coords of golds) {
+        for (var i in golds) {
+            var coords = golds[i];
             if (Collision_right(coords)) {
+                if (playerHasGold) {
+                    return;
+                }
+                ++score;
+                scoreP.innerHTML = 'Score:' + score;
                 playerHasGold = true;
                 golds.splice(i, 1);
             }
         }
 
-        playerX += side / 8;
+        player.x += side / 8;
     }
-    if ((keyIsDown(LEFT_ARROW) || keyIsDown(65)) && playerX > 0) {
+    if ((keyIsDown(LEFT_ARROW) || keyIsDown(65)) && player.x > 0) {
         for (var coords of obstacles) {
             if (Collision_left(coords)) return;
         }
         for (var i in golds) {
             var coords = golds[i];
             if (Collision_left(coords)) {
+                if (playerHasGold) {
+                    return;
+                }
+
+                ++score;
+                scoreP.innerHTML = 'Score:' + score;
                 playerHasGold = true;
                 golds.splice(i, 1);
             }
         }
-        var base1 = { x: base.x + side, y: base.y };
-        var base2 = { x: base.x + side, y: base.y + side };
-        if ( Collision_left(base1) || Collision_left(base2)) {
-            playerHasGold = false;
+        if (Base_Collision_left(base)) {
+            if (playerHasGold) {
+                playerHasGold = false;
+                ++score;
+                scoreP.innerHTML = 'Score:' + score;
+
+            }
             return;
         }
-        playerX -= side / 8;
+        player.x -= side / 8;
     }
-    if ((keyIsDown(UP_ARROW) || keyIsDown(87)) && playerY > 0) {
+    if ((keyIsDown(UP_ARROW) || keyIsDown(87)) && player.y > 0) {
         for (var coords of obstacles) {
             if (Collision_up(coords)) return;
         }
         for (var i in golds) {
             var coords = golds[i];
             if (Collision_up(coords)) {
+                if (playerHasGold) {
+                    return;
+                }
+                ++score;
+                scoreP.innerHTML = 'Score:' + score;
                 playerHasGold = true;
                 golds.splice(i, 1);
             }
         }
-        playerY -= side / 8;
+        player.y -= side / 8;
     }
-    if ((keyIsDown(DOWN_ARROW) || keyIsDown(83)) && playerY < (height - side)) {
+    if ((keyIsDown(DOWN_ARROW) || keyIsDown(83)) && player.y < (height - side)) {
         for (var coords of obstacles) {
             if (Collision_down(coords)) return;
         }
         for (var i in golds) {
             var coords = golds[i];
             if (Collision_down(coords)) {
+                if (playerHasGold) {
+                    return;
+                }
+                ++score;
+                scoreP.innerHTML = 'Score:' + score;
                 playerHasGold = true;
                 golds.splice(i, 1);
             }
         }
-        var base1 = { x: base.x + side, y: base.y };
-
-        if (Collision_down(base) || Collision_down(base1)) {
-            playerHasGold = false;
+        if (Base_Collision_down(base)) {
+            if (playerHasGold) {
+                playerHasGold = false;
+                ++score;
+                scoreP.innerHTML = 'Score:' + score;
+            }
             return;
         }
-        playerY += side / 8;
+        player.y += side / 8;
     }
 
 }
+
+// function main(){
+//     sockec.emit('send all coords',player,base,obstacles,golds);
+// }
+
+
+
+
 // var base1 = { x: base.x + side, y: base.y };
 // var base2 = { x: base.x + side, y: base.y + side };
 // if (Collision_right(base) || Collision_right(base1) || Collision_right(base2)) {
-
-
 // }
