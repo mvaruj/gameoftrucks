@@ -35,11 +35,11 @@ function inside(obj1, obj2) {
 }
 function getRandObj(object, n) {
     for (var i = 0; i < n; ++i) {
-        var newX = Math.round(Math.random() * (canvasWidth - 1) * side);
-        var newY = Math.round(Math.random() * (canvasHeight - 1) * side);
+        var newX = Math.round(Math.random() * (canvasWidth - 3) * side + side);
+        var newY = Math.round(Math.random() * (canvasHeight - 3) * side + side);
         var newObject = { x: newX, y: newY };
         var ok = true;
-        if (inside(newObject, player) || inside(newObject, base)) {
+        if (inside(newObject, player) || insideBase(newObject, base)) {
             --i;
             continue;
         }
@@ -59,17 +59,16 @@ function getRandObj(object, n) {
         else { --i; }
     }
 }
-// function baseCollision() {
-//     var baseOX = bases[1].x + side;
-//     var baseOY = bases[1].y + side;
-//     var playerOX = player.x + (side/2);
-//     var playerOY = player.y + (side/2);
-//     if (Math.abs((baseOX - playerOX) <= 48) && Math.abs((baseOY - playerOY) <= 48)) {
-//         playerHasGold = false;
-//         return true;
-//     }
-//     return false;
-// }
+function insideBase(obj, base) {
+    var baseOX = base.x + side;
+    var baseOY = base.y + side;
+    var objOX = obj.x + (side / 2);
+    var objOY = obj.y + (side / 2);
+    if (Math.abs((baseOX - objOX) <= 48) && Math.abs((baseOY - objOY) <= 48)) {
+        return true;
+    }
+    return false;
+}
 // Detect the collision
 function Collision_right(coords) {
     var obstacleX = coords.x;

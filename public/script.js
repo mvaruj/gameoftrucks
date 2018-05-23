@@ -270,7 +270,7 @@ function draw() {
 }*/
 
 var side = 32;
-var canvasHeight = 10;//*side
+var canvasHeight = 16;//*side
 var canvasWidth = 16;//*side
 var obstacles = [];
 var golds = [];
