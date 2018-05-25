@@ -21,6 +21,10 @@ function drawResources() { // Draw the resources
     for (var coords of bases) {
         rect(coords.x, coords.y, 2 * side, 2 * side);
     }
+    fill(0, 233, 0);
+    for (var coords of energies) {
+        rect(coords.x, coords.y,  side,  side);
+    }
 }
 function inside(obj1, obj2) {
 
@@ -150,10 +154,28 @@ function Base_Collision_left(base) {
     }
     return false;
 }
+function Base_Collision_right(base) {
+
+    var base3 = { x: base.x , y: base.y+ side };
+
+    if (Collision_left(base) || Collision_left(base3)) {
+        return true;
+    }
+    return false;
+}
 function Base_Collision_down(base) {
     var base1 = { x: base.x + side, y: base.y };
 
     if (Collision_down(base) || Collision_down(base1)) {
+        return true;
+    }
+    return false;
+}
+function Base_Collision_up(base) {
+    var base2 = { x: base.x + side, y: base.y+ side };
+    var base3 = { x: base.x , y: base.y+ side };
+
+    if (Collision_down(base2) || Collision_down(base3)) {
         return true;
     }
     return false;

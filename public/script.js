@@ -274,7 +274,9 @@ var canvasHeight = 16;//*side
 var canvasWidth = 16;//*side
 var obstacles = [];
 var golds = [];
-var bases = [{ x: 0, y: (canvasHeight - 2) * side }]
+var energies = [];
+var bases = [{ x: 0, y: (canvasHeight - 2) * side },
+];
 //var players = [{ x: 2, y: (canvasHeight - 3) * side }]
 var base = { x: 0, y: (canvasHeight - 2) * side };
 // var player.x = 2 * side;
@@ -282,12 +284,16 @@ var base = { x: 0, y: (canvasHeight - 2) * side };
 var player = { x: 2 * side, y: (canvasHeight - 1) * side }
 var playerHasGold = false;
 var score = 0;
+var energy = 10;
 var scoreP = document.getElementById("scoreP");
+var energyP = document.getElementById("energyP");
+
 //var socket = io.connect('http://localhost:3000');
 
 //random obstacles & golds
 getRandObj(obstacles, 8);
 getRandObj(golds, 4)
+getRandObj(energies, 4)
 
 
 // function preload() {
@@ -305,6 +311,7 @@ function draw() {
 
     drawResources(); // Draw the resources
 
+    //-------COLLISIONS-----------
     // Add elses in this if contruction to lock diagonal movement
     if ((keyIsDown(RIGHT_ARROW) || keyIsDown(68)) && player.x < (width - side)) {
         for (var coords of obstacles) {
@@ -323,6 +330,23 @@ function draw() {
             }
         }
 
+        for (var i in energies) {
+            var coords = energies[i];
+            if (Collision_right(coords)) {
+                ++energy;
+                energyP.innerHTML = 'Energy:' + energy;
+                energies.splice(i, 1);
+            }
+        }
+        if (Base_Collision_right(base)) {
+            if (playerHasGold) {
+                playerHasGold = false;
+                ++score;
+                scoreP.innerHTML = 'Score:' + score;
+
+            }
+            return;
+        }
         player.x += side / 8;
     }
     if ((keyIsDown(LEFT_ARROW) || keyIsDown(65)) && player.x > 0) {
@@ -342,6 +366,15 @@ function draw() {
                 golds.splice(i, 1);
             }
         }
+        for (var i in energies) {
+            var coords = energies[i];
+            if (Collision_left(coords)) {
+                ++energy;
+                energyP.innerHTML = 'Energy:' + energy;
+                energies.splice(i, 1);
+            }
+        }
+
         if (Base_Collision_left(base)) {
             if (playerHasGold) {
                 playerHasGold = false;
@@ -369,6 +402,24 @@ function draw() {
                 golds.splice(i, 1);
             }
         }
+
+        for (var i in energies) {
+            var coords = energies[i];
+            if (Collision_up(coords)) {
+                ++energy;
+                energyP.innerHTML = 'Energy:' + energy;
+                energies.splice(i, 1);
+            }
+        }
+        if (Base_Collision_up(base)) {
+            if (playerHasGold) {
+                playerHasGold = false;
+                ++score;
+                scoreP.innerHTML = 'Score:' + score;
+
+            }
+            return;
+        }
         player.y -= side / 8;
     }
     if ((keyIsDown(DOWN_ARROW) || keyIsDown(83)) && player.y < (height - side)) {
@@ -387,6 +438,15 @@ function draw() {
                 golds.splice(i, 1);
             }
         }
+
+        for (var i in energies) {
+            var coords = energies[i];
+            if (Collision_down(coords)) {
+                ++energy;
+                energyP.innerHTML = 'Energy:' + energy;
+                energies.splice(i, 1);
+            }
+        }
         if (Base_Collision_down(base)) {
             if (playerHasGold) {
                 playerHasGold = false;
@@ -399,6 +459,15 @@ function draw() {
     }
 
 }
+setInterval(function () {
+    if (energy != 0) {
+        --energy;
+        energyP.innerHTML = "Energy:" + energy;
+    }
+    else {
+        var GameOver = true;
+    }
+}, 10000);
 
 // function main(){
 //     sockec.emit('send all coords',player,base,obstacles,golds);
