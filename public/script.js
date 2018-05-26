@@ -275,10 +275,12 @@ var canvasWidth = 16;//*side
 var obstacles = [];
 var golds = [];
 var energies = [];
-var bases = [{ x: 0, y: (canvasHeight - 2) * side },
-];
+var bases = [{ x: 0, y: 0 },
+{ x: (canvasWidth - 2) * side, y: 0 },
+{ x: 0, y: (canvasHeight - 2) * side },
+{ x: (canvasWidth - 2) * side, y: (canvasHeight - 2) * side }];
 //var players = [{ x: 2, y: (canvasHeight - 3) * side }]
-var base = { x: 0, y: (canvasHeight - 2) * side };
+//var base = { x: 0, y: (canvasHeight - 2) * side };
 // var player.x = 2 * side;
 // var playerY = 13 * side;
 var player = { x: 2 * side, y: (canvasHeight - 1) * side }
@@ -291,9 +293,9 @@ var energyP = document.getElementById("energyP");
 //var socket = io.connect('http://localhost:3000');
 
 //random obstacles & golds
-getRandObj(obstacles, 8);
+getRandObj(obstacles, 3);
 getRandObj(golds, 4)
-getRandObj(energies, 4)
+getRandObj(energies, 2)
 
 
 // function preload() {
@@ -338,14 +340,15 @@ function draw() {
                 energies.splice(i, 1);
             }
         }
-        if (Base_Collision_right(base)) {
-            if (playerHasGold) {
-                playerHasGold = false;
-                ++score;
-                scoreP.innerHTML = 'Score:' + score;
-
+        for (var coords of bases) {
+            if (Base_Collision_right(coords)) {
+                if (playerHasGold) {
+                    playerHasGold = false;
+                    ++score;
+                    scoreP.innerHTML = 'Score:' + score;
+                }
+                return;
             }
-            return;
         }
         player.x += side / 8;
     }
@@ -374,15 +377,15 @@ function draw() {
                 energies.splice(i, 1);
             }
         }
-
-        if (Base_Collision_left(base)) {
-            if (playerHasGold) {
-                playerHasGold = false;
-                ++score;
-                scoreP.innerHTML = 'Score:' + score;
-
+        for (var coords of bases) {
+            if (Base_Collision_left(coords)) {
+                if (playerHasGold) {
+                    playerHasGold = false;
+                    ++score;
+                    scoreP.innerHTML = 'Score:' + score;
+                }
+                return;
             }
-            return;
         }
         player.x -= side / 8;
     }
@@ -411,14 +414,15 @@ function draw() {
                 energies.splice(i, 1);
             }
         }
-        if (Base_Collision_up(base)) {
-            if (playerHasGold) {
-                playerHasGold = false;
-                ++score;
-                scoreP.innerHTML = 'Score:' + score;
-
+        for (var coords of bases) {
+            if (Base_Collision_up(coords)) {
+                if (playerHasGold) {
+                    playerHasGold = false;
+                    ++score;
+                    scoreP.innerHTML = 'Score:' + score;
+                }
+                return;
             }
-            return;
         }
         player.y -= side / 8;
     }
@@ -447,13 +451,15 @@ function draw() {
                 energies.splice(i, 1);
             }
         }
-        if (Base_Collision_down(base)) {
-            if (playerHasGold) {
-                playerHasGold = false;
-                ++score;
-                scoreP.innerHTML = 'Score:' + score;
+        for (var coords of bases) {
+            if (Base_Collision_down(coords)) {
+                if (playerHasGold) {
+                    playerHasGold = false;
+                    ++score;
+                    scoreP.innerHTML = 'Score:' + score;
+                }
+                return;
             }
-            return;
         }
         player.y += side / 8;
     }
