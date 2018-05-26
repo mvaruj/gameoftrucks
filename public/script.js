@@ -268,13 +268,27 @@ function draw() {
         player.y += side / 8;
     }
 }*/
+var socket = io();
+var config = {};
+
+var side = 32;
+
+var players;
+var obstacles;
+var energies;
+var golds;
+var gameStarted = false;
+
+var playerX;
+var playerY;
+var playerHasGold = false;
 
 var side = 32;
 var canvasHeight = 16;//*side
 var canvasWidth = 16;//*side
-var obstacles = [];
-var golds = [];
-var energies = [];
+// var obstacles = [];
+// var golds = [];
+// var energies = [];
 var bases = [{ x: 0, y: 0 },
 { x: (canvasWidth - 2) * side, y: 0 },
 { x: 0, y: (canvasHeight - 2) * side },
@@ -283,19 +297,18 @@ var bases = [{ x: 0, y: 0 },
 //var base = { x: 0, y: (canvasHeight - 2) * side };
 // var player.x = 2 * side;
 // var playerY = 13 * side;
-var player = { x: 2 * side, y: (canvasHeight - 1) * side }
-var playerHasGold = false;
+// var player = { x: 2 * side, y: (canvasHeight - 1) * side }
+// var playerHasGold = false;
 var score = 0;
 var energy = 10;
 var scoreP = document.getElementById("scoreP");
 var energyP = document.getElementById("energyP");
 
-//var socket = io.connect('http://localhost:3000');
 
-//random obstacles & golds
-getRandObj(obstacles, 3);
-getRandObj(golds, 4)
-getRandObj(energies, 2)
+// //random obstacles & golds
+// getRandObj(obstacles, 3);
+// getRandObj(golds, 4)
+// getRandObj(energies, 2)
 
 
 // function preload() {
@@ -307,164 +320,200 @@ function setup() {
 }
 
 function draw() {
-    background('#acacac'); // Clear the screen
+    if (gameStarted) {
+        background('#acacac'); // Clear the screen
 
-    drawPlayer(); // Draw the player
+        drawPlayer(); // Draw the player
 
-    drawResources(); // Draw the resources
+        drawResources(); // Draw the resources
 
-    //-------COLLISIONS-----------
-    // Add elses in this if contruction to lock diagonal movement
-    if ((keyIsDown(RIGHT_ARROW) || keyIsDown(68)) && player.x < (width - side)) {
-        for (var coords of obstacles) {
-            if (Collision_right(coords)) return;
-        }
-        for (var i in golds) {
-            var coords = golds[i];
-            if (Collision_right(coords)) {
-                if (playerHasGold) {
-                    return;
-                }
-                ++score;
-                scoreP.innerHTML = 'Score:' + score;
-                playerHasGold = true;
-                golds.splice(i, 1);
+        //-------COLLISIONS-----------
+        // Add elses in this if contruction to lock diagonal movement
+        if ((keyIsDown(RIGHT_ARROW) || keyIsDown(68)) && player.x < (width - side)) {
+            for (var coords of obstacles) {
+                if (Collision_right(coords)) return;
             }
-        }
-
-        for (var i in energies) {
-            var coords = energies[i];
-            if (Collision_right(coords)) {
-                ++energy;
-                energyP.innerHTML = 'Energy:' + energy;
-                energies.splice(i, 1);
-            }
-        }
-        for (var coords of bases) {
-            if (Base_Collision_right(coords)) {
-                if (playerHasGold) {
-                    playerHasGold = false;
+            for (var i in golds) {
+                var coords = golds[i];
+                if (Collision_right(coords)) {
+                    if (playerHasGold) {
+                        return;
+                    }
                     ++score;
                     scoreP.innerHTML = 'Score:' + score;
+                    playerHasGold = true;
+                    golds.splice(i, 1);
+                    socket.emit('splice golds', i);
+
                 }
-                return;
             }
-        }
-        player.x += side / 8;
-    }
-    if ((keyIsDown(LEFT_ARROW) || keyIsDown(65)) && player.x > 0) {
-        for (var coords of obstacles) {
-            if (Collision_left(coords)) return;
-        }
-        for (var i in golds) {
-            var coords = golds[i];
-            if (Collision_left(coords)) {
-                if (playerHasGold) {
+
+            for (var i in energies) {
+                var coords = energies[i];
+                if (Collision_right(coords)) {
+                    ++energy;
+                    energyP.innerHTML = 'Energy:' + energy;
+                    energies.splice(i, 1);
+                    // socket.emit('splice golds', i);
+                }
+            }
+            for (var coords of bases) {
+                if (Base_Collision_right(coords)) {
+                    if (playerHasGold) {
+                        playerHasGold = false;
+                        ++score;
+                        scoreP.innerHTML = 'Score:' + score;
+                    }
                     return;
                 }
+            }
+            player.x += side / 8;
+            socket.emit('move', { x: playerX, y: playerY, color: config.color, hasGold: playerHasGold });
+        }
+        if ((keyIsDown(LEFT_ARROW) || keyIsDown(65)) && player.x > 0) {
+            for (var coords of obstacles) {
+                if (Collision_left(coords)) return;
+            }
+            for (var i in golds) {
+                var coords = golds[i];
+                if (Collision_left(coords)) {
+                    if (playerHasGold) {
+                        return;
+                    }
 
-                ++score;
-                scoreP.innerHTML = 'Score:' + score;
-                playerHasGold = true;
-                golds.splice(i, 1);
-            }
-        }
-        for (var i in energies) {
-            var coords = energies[i];
-            if (Collision_left(coords)) {
-                ++energy;
-                energyP.innerHTML = 'Energy:' + energy;
-                energies.splice(i, 1);
-            }
-        }
-        for (var coords of bases) {
-            if (Base_Collision_left(coords)) {
-                if (playerHasGold) {
-                    playerHasGold = false;
                     ++score;
                     scoreP.innerHTML = 'Score:' + score;
+                    playerHasGold = true;
+                    golds.splice(i, 1);
+                    socket.emit('splice golds', i);
                 }
-                return;
             }
-        }
-        player.x -= side / 8;
-    }
-    if ((keyIsDown(UP_ARROW) || keyIsDown(87)) && player.y > 0) {
-        for (var coords of obstacles) {
-            if (Collision_up(coords)) return;
-        }
-        for (var i in golds) {
-            var coords = golds[i];
-            if (Collision_up(coords)) {
-                if (playerHasGold) {
+            for (var i in energies) {
+                var coords = energies[i];
+                if (Collision_left(coords)) {
+                    ++energy;
+                    energyP.innerHTML = 'Energy:' + energy;
+                    energies.splice(i, 1);
+                }
+            }
+            for (var coords of bases) {
+                if (Base_Collision_left(coords)) {
+                    if (playerHasGold) {
+                        playerHasGold = false;
+                        ++score;
+                        scoreP.innerHTML = 'Score:' + score;
+                    }
                     return;
                 }
-                ++score;
-                scoreP.innerHTML = 'Score:' + score;
-                playerHasGold = true;
-                golds.splice(i, 1);
             }
+            player.x -= side / 8;
+            socket.emit('move', { x: playerX, y: playerY, color: config.color, hasGold: playerHasGold });
         }
-
-        for (var i in energies) {
-            var coords = energies[i];
-            if (Collision_up(coords)) {
-                ++energy;
-                energyP.innerHTML = 'Energy:' + energy;
-                energies.splice(i, 1);
+        if ((keyIsDown(UP_ARROW) || keyIsDown(87)) && player.y > 0) {
+            for (var coords of obstacles) {
+                if (Collision_up(coords)) return;
             }
-        }
-        for (var coords of bases) {
-            if (Base_Collision_up(coords)) {
-                if (playerHasGold) {
-                    playerHasGold = false;
+            for (var i in golds) {
+                var coords = golds[i];
+                if (Collision_up(coords)) {
+                    if (playerHasGold) {
+                        return;
+                    }
                     ++score;
                     scoreP.innerHTML = 'Score:' + score;
+                    playerHasGold = true;
+                    golds.splice(i, 1);
+                    socket.emit('splice golds', i);
                 }
-                return;
             }
-        }
-        player.y -= side / 8;
-    }
-    if ((keyIsDown(DOWN_ARROW) || keyIsDown(83)) && player.y < (height - side)) {
-        for (var coords of obstacles) {
-            if (Collision_down(coords)) return;
-        }
-        for (var i in golds) {
-            var coords = golds[i];
-            if (Collision_down(coords)) {
-                if (playerHasGold) {
+
+            for (var i in energies) {
+                var coords = energies[i];
+                if (Collision_up(coords)) {
+                    ++energy;
+                    energyP.innerHTML = 'Energy:' + energy;
+                    energies.splice(i, 1);
+                }
+            }
+            for (var coords of bases) {
+                if (Base_Collision_up(coords)) {
+                    if (playerHasGold) {
+                        playerHasGold = false;
+                        ++score;
+                        scoreP.innerHTML = 'Score:' + score;
+                    }
                     return;
                 }
-                ++score;
-                scoreP.innerHTML = 'Score:' + score;
-                playerHasGold = true;
-                golds.splice(i, 1);
             }
+            player.y -= side / 8;
+            socket.emit('move', { x: playerX, y: playerY, color: config.color, hasGold: playerHasGold });
         }
-
-        for (var i in energies) {
-            var coords = energies[i];
-            if (Collision_down(coords)) {
-                ++energy;
-                energyP.innerHTML = 'Energy:' + energy;
-                energies.splice(i, 1);
+        if ((keyIsDown(DOWN_ARROW) || keyIsDown(83)) && player.y < (height - side)) {
+            for (var coords of obstacles) {
+                if (Collision_down(coords)) return;
             }
-        }
-        for (var coords of bases) {
-            if (Base_Collision_down(coords)) {
-                if (playerHasGold) {
-                    playerHasGold = false;
+            for (var i in golds) {
+                var coords = golds[i];
+                if (Collision_down(coords)) {
+                    if (playerHasGold) {
+                        return;
+                    }
                     ++score;
                     scoreP.innerHTML = 'Score:' + score;
+                    playerHasGold = true;
+                    golds.splice(i, 1);
+                    socket.emit('splice golds', i);
                 }
-                return;
             }
-        }
-        player.y += side / 8;
-    }
 
+            for (var i in energies) {
+                var coords = energies[i];
+                if (Collision_down(coords)) {
+                    ++energy;
+                    energyP.innerHTML = 'Energy:' + energy;
+                    energies.splice(i, 1);
+                }
+            }
+            for (var coords of bases) {
+                if (Base_Collision_down(coords)) {
+                    if (playerHasGold) {
+                        playerHasGold = false;
+                        ++score;
+                        scoreP.innerHTML = 'Score:' + score;
+                    }
+                    return;
+                }
+            }
+            player.y += side / 8;
+            socket.emit('move', { x: playerX, y: playerY, color: config.color, hasGold: playerHasGold });
+        }
+    } else {
+        background("#acacac");
+        textSize(48);
+        text('Wainting for players to join the game, please wait', 30, 60);
+    }
 }
+
+socket.on('game started', function (data) {
+    gameStarted = true;
+    golds = data.golds;
+    energies = data.energies;
+    obstacles = data.obstacles;
+    players = data.players;
+});
+
+socket.on('config data', function (data) {
+    config = data;
+    playerX = config.x;
+    playerY = config.y;
+});
+
+socket.on('main data', function (data) {
+    golds = data.golds;
+    energies = data.energies;
+    obstacles = data.obstacles;
+    players = data.players;
+});
 setInterval(function () {
     if (energy != 0) {
         --energy;
