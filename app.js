@@ -1,40 +1,3 @@
-
-// var express = require('express');
-// var app = express();
-// var server = require('http').Server(app);
-// var io = require('socket.io')(server);
-
-// app.use(express.static("."));
-// app.get('/', function (req, res) {
-//    res.redirect('public/index.html');
-// });
-// server.listen(3000);
-
-// var express = require('express');
-// var path = require('path');
-// var app = express();
-// var server = require('http').Server(app);
-// var io = require('socket.io')(server);
-// var obstacles = [];
-// var golds = [];
-// var player
-// var base
-// // Define the port to run on
-// app.set('port', process.env.PORT || 3000);
-
-// app.use(express.static(path.join(__dirname, 'public')));
-
-// // Listen for requests
-// var server = app.listen(app.get('port'), function () {
-//   var port = server.address().port;
-//   console.log('Magic happens on port ' + port);
-//  });
-// io.on('connection',function (socket){
-//    io.sockets.emit('display canvas', base, player, obstacles, golds);
-//    socket.on('send all coords', function (data){
-
-//    })
-// });
 var express = require('express');
 var app = express();
 var server = require('http').Server(app);
@@ -46,10 +9,10 @@ var side = 32;
 var width = 32, height = 30;
 
 var Players = [
-  { x: 2 * side, y: 0, color: "red", hasGold: false },
-  { x: 2 * side, y: (height - 1) * side, color: "blue", hasGold: false },
-  { x: (width - 3) * side, y: 0, color: "green", hasGold: false },
-  { x: (width - 3) * side, y: (height - 1) * side, color: "yellow", hasGold: false }
+    { x: 2 * side, y: 0, color: "red", hasGold: false },
+    { x: 2 * side, y: (height - 1) * side, color: "blue", hasGold: false },
+    { x: (width - 3) * side, y: 0, color: "green", hasGold: false },
+    { x: (width - 3) * side, y: (height - 1) * side, color: "yellow", hasGold: false }
 ];
 
 var allCoordinates = [];
@@ -62,93 +25,98 @@ var goldCount = 15;
 var energyCount = 10;
 var obstacleCount = 20;
 
-app.use(express.static('.'));
+app.use(express.static('public'));
 
 app.get('/', function (req, res) {
-  res.sendFile(__dirname + '/index.html');
+    res.sendFile(__dirname + '/public/index.html');
 });
 
 server.listen(port, function () {
-  console.log("Server is listening on port " + port);
+    console.log("Server is listening on port " + port);
 });
 
 var playerColorCounter = 0;
 
 io.on('connection', function (socket) {
 
-  if (playerColorCounter != 4)
-    socket.emit('config data', Players[playerColorCounter++]);
-  else
-    socket.emit('no space', 'No space left, please wait until the next session');
+    if (playerColorCounter != 4)
+        socket.emit('config data', Players[playerColorCounter++]);
+    else
+        socket.emit('no space', 'No space left, please wait until the next session');
 
-  if (playerColorCounter == 4) {
-    startGame();
-    console.log("GAME STARTED");
-  }
+    if (playerColorCounter == 4) {
+        startGame();
+        console.log("GAME STARTED");
+    }
 
-  console.log("New user connected, playerCount: " + playerColorCounter);
+    console.log("New user connected, playerCount: " + playerColorCounter);
 
-  socket.on('move', function (data) {
-    for (let i in Players) {
-      if (Players[i].color == data.color) {
-        Players[i] = data;
-      }
-    };
-    io.sockets.emit('main data', {
-      golds: GoldArr,
-      energies: EnergyArr,
-      obstacles: ObstalceArr,
-      players: Players
+    socket.on('move', function (data) {
+        for (let i in Players) {
+            if (Players[i].color == data.color) {
+                Players[i] = data;
+            }
+        };
+        io.sockets.emit('main data', {
+            golds: GoldArr,
+            energies: EnergyArr,
+            obstacles: ObstalceArr,
+            players: Players
+        });
     });
-  });
 
-  socket.on('disconnect', function () {
-    playerColorCounter--;
-  });
+    socket.on('disconnect', function () {
+        playerColorCounter--;
+    });
 
-  socket.on('splice golds', function (index) {
-    GoldArr.splice(index, 1);
-  });
+    socket.on('splice gold', function (index) {
+        GoldArr.splice(index, 1);
+    });
+    socket.on('splice energy', function (index) {
+        EnergyArr.splice(index, 1);
+    });
 
 });
 
 function startGame() {
-  generateMap();
-  io.sockets.emit('game started', {
-    golds: GoldArr,
-    energies: EnergyArr,
-    obstacles: ObstalceArr,
-    players: Players
-  });
+    generateMap();
+    io.sockets.emit('game started', {
+        golds: GoldArr,
+        energies: EnergyArr,
+        obstacles: ObstalceArr,
+        players: Players
+    });
 }
 
 function generateMap() {
-  for (var i = 0; i < goldCount; i++) {
-    var x = (2 + random(width - 4)) * side, y = (2 + random(height - 4)) * side;
-    if (!allCoordinates.includes(x + '' + y)) {
-      GoldArr.push({ x: x, y: y })
-      allCoordinates.push(x + '' + y);
-    } else i--;
-  }
-  for (var i = 0; i < energyCount; i++) {
-    var x = (2 + random(width - 4)) * side, y = (2 + random(height - 4)) * side;
-    if (!allCoordinates.includes(x + '' + y)) {
-      EnergyArr.push({ x: x, y: y })
-      allCoordinates.push(x + '' + y);
-    } else i--;
-  }
-  for (var i = 0; i < obstacleCount; i++) {
-    var x = (2 + random(width - 4)) * side, y = (2 + random(height - 4)) * side;
-    if (!allCoordinates.includes(x + '' + y)) {
-      ObstalceArr.push({ x: x, y: y })
-      allCoordinates.push(x + '' + y);
-    } else i--;
-  }
+    for (var i = 0; i < goldCount; i++) {
+        var x = (2 + random(width - 4)) * side, y = (2 + random(height - 4)) * side;
+        if (!allCoordinates.includes(x + '' + y)) {
+            GoldArr.push({ x: x, y: y })
+            allCoordinates.push(x + '' + y);
+        } else i--;
+    }
+    for (var i = 0; i < energyCount; i++) {
+        var x = (2 + random(width - 4)) * side, y = (2 + random(height - 4)) * side;
+        if (!allCoordinates.includes(x + '' + y)) {
+            EnergyArr.push({ x: x, y: y })
+            allCoordinates.push(x + '' + y);
+        } else i--;
+    }
+    for (var i = 0; i < obstacleCount; i++) {
+        var x = (2 + random(width - 4)) * side, y = (2 + random(height - 4)) * side;
+        if (!allCoordinates.includes(x + '' + y)) {
+            ObstalceArr.push({ x: x, y: y })
+            allCoordinates.push(x + '' + y);
+        } else i--;
+    }
 }
 
 function random(max) {
-  return Math.floor(Math.random() * max);
+    return Math.floor(Math.random() * max);
 }
+
+
 
 
 
