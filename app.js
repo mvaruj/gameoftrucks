@@ -6,7 +6,7 @@ var io = require('socket.io')(server);
 var port = process.env.PORT || 3000;
 
 var side = 32;
-var width = 32, height = 30;
+var width = 25, height = 25;
 
 var Players = [
     { x: 2 * side, y: 0, color: "red", hasGold: false },

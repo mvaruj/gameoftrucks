@@ -1,13 +1,12 @@
 var socket = io();
 var config = {};
 
+//var playerName = prompt("input your name");
 var side = 32;
-var canvasHeight = 30;//*side
-var canvasWidth = 32;//*side
-var players;
-var obstacles;
-var energies;
-var golds;
+var canvasHeight = 25;//*side
+var canvasWidth = 25;//*side
+var fogRadius = 50;
+var players, obstacles, energies, golds;
 var gameStarted = false;
 var gameOver = false;
 var playerX;
@@ -22,29 +21,38 @@ var bases = [{ x: 0, y: 0, color: 'red' },
 { x: 0, y: (canvasHeight - 2) * side, color: "blue" },
 { x: (canvasWidth - 2) * side, y: (canvasHeight - 2) * side, color: "yellow" }];
 
+// if (gameStarted) {
+//     alert("You Are " + config.color);
+// }
 function setup() {
-    createCanvas(side * 32, side * 30);
+    createCanvas(side * canvasWidth, side * canvasHeight);
 }
 
 function draw() {
-    if(gameOver){
+    if (gameOver) {
         background("#acacac");
         textSize(58);
         text('GAME OVER', 30, 60);
         textSize(28);
-        text('Energy is over', 30, 60);
+        text('Energy is over', 30, 90);
         textSize(38);
-        text('Your Score:'+score, 30, 60);
+        text('Your Score:' + score, 30, 110);
     }
     else if (gameStarted) {
         background('#acacac'); // Clear the screen
-
         drawPlayer(); // Draw the player
 
         drawResources(); // Draw the resources
+        // WAR FOG
+        fill(0);
+        rect(0, 0, playerX - fogRadius, canvasHeight * side);
+        rect(0, 0, canvasWidth * side, playerY - fogRadius);
+        rect(playerX + side + fogRadius, 0, canvasWidth * side, canvasHeight * side);
+        rect(0, playerY + side + fogRadius, canvasWidth * side, canvasHeight * side);
+
 
         // Add elses in this if contruction to lock diagonal movement
-        //________________________RIGHT__________________--
+        //________________________RIGHT__________________   
         if ((keyIsDown(RIGHT_ARROW) || keyIsDown(68)) && playerX < (width - side)) {
             for (var coords of obstacles) {
                 if (Collision_right(coords)) return;
@@ -77,6 +85,13 @@ function draw() {
                         scoreP.innerHTML = 'Score:' + score;
                     }
                     return;
+                }
+            }
+            for (var i in players) {
+                if (players[i].color != playerColor) {
+                    if (Collision_right(players[i])) {
+                        return;
+                    }
                 }
             }
             playerX += side / 8;
@@ -117,6 +132,14 @@ function draw() {
                     return;
                 }
             }
+            for (var i in players) {
+                if (players[i].color != playerColor) {
+                    if (Collision_left(players[i])) {
+                        return;
+                    }
+                }
+            }
+
             playerX -= side / 8;
             socket.emit('move', { x: playerX, y: playerY, color: config.color, hasGold: playerHasGold });
         }
@@ -153,6 +176,13 @@ function draw() {
                         scoreP.innerHTML = 'Score:' + score;
                     }
                     return;
+                }
+            }
+            for (var i in players) {
+                if (players[i].color != playerColor) {
+                    if (Collision_up(players[i])) {
+                        return;
+                    }
                 }
             }
             playerY -= side / 8;
@@ -193,6 +223,13 @@ function draw() {
                     return;
                 }
             }
+            for (var i in players) {
+                if (players[i].color != playerColor) {
+                    if (Collision_down(players[i])) {
+                        return;
+                    }
+                }
+            }
             playerY += side / 8;
             socket.emit('move', { x: playerX, y: playerY, color: config.color, hasGold: playerHasGold });
         }
@@ -204,12 +241,14 @@ function draw() {
     }
 }//draw end
 setInterval(function () {
-    if (energy >1) {
+    if (energy > 1) {
         --energy;
         energyP.innerHTML = "Energy:" + energy;
     }
-    else {
-        var gameOver = true;
+    else if (energy <= 1) {
+        --energy;
+        energyP.innerHTML = "Energy:" + energy;
+        gameOver = true;
     }
 }, 10000);
 
