@@ -139,3 +139,9 @@ function Base_Collision_up(base) {
     }
     return false;
 }
+function GameOver() {
+    background(0);
+    fill('red');
+    textSize(58);
+    text('GAME OVER', 30, 60);
+}

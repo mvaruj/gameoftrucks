@@ -12,8 +12,7 @@ var gameOver = false;
 var playerX;
 var playerY;
 var playerHasGold = false;
-var score = 0;
-var energy = 10;
+
 var scoreP = document.getElementById("scoreP");
 var energyP = document.getElementById("energyP");
 var bases = [{ x: 0, y: 0, color: 'red' },
@@ -36,7 +35,7 @@ function draw() {
         textSize(28);
         text('Energy is over', 30, 90);
         textSize(38);
-        text('Your Score:' + score, 30, 110);
+        text('Your Score:' + playerScore, 30, 110);
     }
     else if (gameStarted) {
         background('#acacac'); // Clear the screen
@@ -61,8 +60,8 @@ function draw() {
                 var coords = golds[i];
                 if (Collision_right(coords)) {
                     if (playerHasGold) return;
-                    ++score;
-                    scoreP.innerHTML = 'Score:' + score;
+                    ++playerScore;
+                    scoreP.innerHTML = 'Score:' + playerScore;
                     playerHasGold = true;
                     golds.splice(i, 1);
                     socket.emit('splice gold', i);
@@ -71,18 +70,18 @@ function draw() {
             for (var i in energies) {
                 var coords = energies[i];
                 if (Collision_right(coords)) {
-                    ++energy;
-                    energyP.innerHTML = 'Energy:' + energy;
+                    ++playerEnergy;
+                    energyP.innerHTML = 'Energy:' + playerEnergy;
                     energies.splice(i, 1);
-                    socket.emit('splice energy', i);
+                    socket.emit('splice Energy', i);
                 }
             }
             for (var i in bases) {
                 if (Base_Collision_right(bases[i])) {
                     if (playerHasGold && bases[i].color == playerColor) {
                         playerHasGold = false;
-                        ++score;
-                        scoreP.innerHTML = 'Score:' + score;
+                        ++playerScore;
+                        scoreP.innerHTML = 'Score:' + playerScore;
                     }
                     return;
                 }
@@ -106,8 +105,8 @@ function draw() {
                 var coords = golds[i];
                 if (Collision_left(coords)) {
                     if (playerHasGold) return;
-                    ++score;
-                    scoreP.innerHTML = 'Score:' + score;
+                    ++playerScore;
+                    scoreP.innerHTML = 'Score:' + playerScore;
                     playerHasGold = true;
                     golds.splice(i, 1);
                     socket.emit('splice gold', i);
@@ -116,18 +115,18 @@ function draw() {
             for (var i in energies) {
                 var coords = energies[i];
                 if (Collision_left(coords)) {
-                    ++energy;
-                    energyP.innerHTML = 'Energy:' + energy;
+                    ++playerEnergy;
+                    energyP.innerHTML = 'Energy:' + playerEnergy;
                     energies.splice(i, 1);
-                    socket.emit('splice energy', i);
+                    socket.emit('splice Energy', i);
                 }
             }
             for (var i in bases) {
                 if (Base_Collision_left(bases[i])) {
                     if (playerHasGold && bases[i].color == playerColor) {
                         playerHasGold = false;
-                        ++score;
-                        scoreP.innerHTML = 'Score:' + score;
+                        ++playerScore;
+                        scoreP.innerHTML = 'Score:' + playerScore;
                     }
                     return;
                 }
@@ -152,8 +151,8 @@ function draw() {
                 var coords = golds[i];
                 if (Collision_up(coords)) {
                     if (playerHasGold) return;
-                    ++score;
-                    scoreP.innerHTML = 'Score:' + score;
+                    ++playerScore;
+                    scoreP.innerHTML = 'Score:' + playerScore;
                     playerHasGold = true;
                     golds.splice(i, 1);
                     socket.emit('splice gold', i);
@@ -162,18 +161,18 @@ function draw() {
             for (var i in energies) {
                 var coords = energies[i];
                 if (Collision_up(coords)) {
-                    ++energy;
-                    energyP.innerHTML = 'Energy:' + energy;
+                    ++playerEnergy;
+                    energyP.innerHTML = 'Energy:' + playerEnergy;
                     energies.splice(i, 1);
-                    socket.emit('splice energy', i);
+                    socket.emit('splice Energy', i);
                 }
             }
             for (var i in bases) {
                 if (Base_Collision_up(bases[i])) {
                     if (playerHasGold && bases[i].color == playerColor) {
                         playerHasGold = false;
-                        ++score;
-                        scoreP.innerHTML = 'Score:' + score;
+                        ++playerScore;
+                        scoreP.innerHTML = 'Score:' + playerScore;
                     }
                     return;
                 }
@@ -197,8 +196,8 @@ function draw() {
                 var coords = golds[i];
                 if (Collision_down(coords)) {
                     if (playerHasGold) return;
-                    ++score;
-                    scoreP.innerHTML = 'Score:' + score;
+                    ++playerScore;
+                    scoreP.innerHTML = 'Score:' + playerScore;
                     playerHasGold = true;
                     golds.splice(i, 1);
                     socket.emit('splice gold', i);
@@ -207,18 +206,18 @@ function draw() {
             for (var i in energies) {
                 var coords = energies[i];
                 if (Collision_down(coords)) {
-                    ++energy;
-                    energyP.innerHTML = 'Energy:' + energy;
+                    ++playerEnergy;
+                    energyP.innerHTML = 'Energy:' + playerEnergy;
                     energies.splice(i, 1);
-                    socket.emit('splice energy', i);
+                    socket.emit('splice Energy', i);
                 }
             }
             for (var i in bases) {
                 if (Base_Collision_down(bases[i])) {
                     if (playerHasGold && bases[i].color == playerColor) {
                         playerHasGold = false;
-                        ++score;
-                        scoreP.innerHTML = 'Score:' + score;
+                        ++playerScore;
+                        scoreP.innerHTML = 'Score:' + playerScore;
                     }
                     return;
                 }
@@ -241,13 +240,13 @@ function draw() {
     }
 }//draw end
 setInterval(function () {
-    if (energy > 1) {
-        --energy;
-        energyP.innerHTML = "Energy:" + energy;
+    if (playerEnergy > 1) {
+        --playerEnergy;
+        energyP.innerHTML = "Energy:" + playerEnergy;
     }
-    else if (energy <= 1) {
-        --energy;
-        energyP.innerHTML = "Energy:" + energy;
+    else if (playerEnergy <= 1) {
+        --playerEnergy;
+        energyP.innerHTML = "Energy:" + playerEnergy;
         gameOver = true;
     }
 }, 10000);
@@ -265,7 +264,9 @@ socket.on('config data', function (data) {
     config = data;
     playerX = config.x;
     playerY = config.y;
-    playerColor = config.color
+    playerColor = config.color;
+    playerScore = config.score;
+    playerEnergy = config.energy;
 });
 
 socket.on('main data', function (data) {

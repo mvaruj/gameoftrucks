@@ -9,10 +9,10 @@ var side = 32;
 var width = 25, height = 25;
 
 var Players = [
-    { x: 2 * side, y: 0, color: "red", hasGold: false },
-    { x: 2 * side, y: (height - 1) * side, color: "blue", hasGold: false },
-    { x: (width - 3) * side, y: 0, color: "green", hasGold: false },
-    { x: (width - 3) * side, y: (height - 1) * side, color: "yellow", hasGold: false }
+    { x: 2 * side, y: 0, color: "red", hasGold: false, energy: 10, score: 0 },
+    { x: 2 * side, y: (height - 1) * side, color: "blue", hasGold: false, energy: 10, score: 0 },
+    { x: (width - 3) * side, y: 0, color: "green", hasGold: false, energy: 10, score: 0 },
+    { x: (width - 3) * side, y: (height - 1) * side, color: "yellow", hasGold: false, energy: 10, score: 0 }
 ];
 
 var allCoordinates = [];
