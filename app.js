@@ -72,7 +72,7 @@ io.on('connection', function (socket) {
     socket.on('splice gold', function (index) {
         GoldArr.splice(index, 1);
     });
-    socket.on('splice energy', function (index) {
+    socket.on('splice Energy', function (index) {
         EnergyArr.splice(index, 1);
     });
 

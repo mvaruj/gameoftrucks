@@ -1,7 +1,7 @@
 var socket = io();
 var config = {};
 
-//var playerName = prompt("input your name");
+//var playerName = prompt("Choose a username");
 var side = 32;
 var canvasHeight = 25;//*side
 var canvasWidth = 25;//*side
@@ -29,13 +29,14 @@ function setup() {
 
 function draw() {
     if (gameOver) {
-        background("#acacac");
-        textSize(58);
-        text('GAME OVER', 30, 60);
-        textSize(28);
-        text('Energy is over', 30, 90);
-        textSize(38);
-        text('Your Score:' + playerScore, 30, 110);
+        GameOver()
+        // background("#acacac");
+        // textSize(58);
+        // text('GAME OVER', 30, 60);
+        // textSize(28);
+        // text('Energy is over', 30, 90);
+        // textSize(38);
+        // text('Your Score:' + playerScore, 30, 110);
     }
     else if (gameStarted) {
         background('#acacac'); // Clear the screen
@@ -236,7 +237,7 @@ function draw() {
     else {
         background("#acacac");
         textSize(38);
-        text('Wainting for players to join the game, please wait', 30, 60);
+        text('Wainting for players to join the game', 30, 60);
     }
 }//draw end
 setInterval(function () {

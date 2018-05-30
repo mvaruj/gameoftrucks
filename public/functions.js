@@ -140,8 +140,25 @@ function Base_Collision_up(base) {
     return false;
 }
 function GameOver() {
-    background(0);
-    fill('red');
+    background("grey");
+    fill(0);
     textSize(58);
-    text('GAME OVER', 30, 60);
+    text('GAME OVER', 30, 30);
+    fill("red");
+    textSize(38);
+    text('RED PLAYER. Score: ' + plares[0].score + '; Energy: ' + players[0].energy, 30, 80);
+
+    fill("green");
+    textSize(38);
+    text('GREEN PLAYER. Score: ' + plares[1].score + '; Energy: ' + players[1].energy, 30, 120);
+
+    fill("blue");
+    textSize(38);
+    text('BLUE PLAYER. Score: ' + plares[2].score + '; Energy: ' + players[2].energy, 30, 160);
+
+    fill("yellow");
+    textSize(38);
+    text('YELLOW PLAYER. Score: ' + plares[3].score + '; Energy: ' + players[3].energy, 30, 200);
+
+
 }
