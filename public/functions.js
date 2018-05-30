@@ -143,22 +143,22 @@ function GameOver() {
     background("grey");
     fill(0);
     textSize(58);
-    text('GAME OVER', 30, 30);
+    text('GAME OVER', 60, 50);
     fill("red");
     textSize(38);
-    text('RED PLAYER. Score: ' + plares[0].score + '; Energy: ' + players[0].energy, 30, 80);
+    text('RED PLAYER. Score: ' + players[0].score + '; Energy: ' + players[0].energy, 30, 90);
 
     fill("green");
     textSize(38);
-    text('GREEN PLAYER. Score: ' + plares[1].score + '; Energy: ' + players[1].energy, 30, 120);
+    text('GREEN PLAYER. Score: ' + players[1].score + '; Energy: ' + players[1].energy, 30, 140);
 
     fill("blue");
     textSize(38);
-    text('BLUE PLAYER. Score: ' + plares[2].score + '; Energy: ' + players[2].energy, 30, 160);
+    text('BLUE PLAYER. Score: ' + players[2].score + '; Energy: ' + players[2].energy, 30, 180);
 
     fill("yellow");
     textSize(38);
-    text('YELLOW PLAYER. Score: ' + plares[3].score + '; Energy: ' + players[3].energy, 30, 200);
+    text('YELLOW PLAYER. Score: ' + players[3].score + '; Energy: ' + players[3].energy, 30, 240);
 
 
 }
