@@ -3,12 +3,13 @@ var config = {};
 
 //var playerName = prompt("Choose a username");
 var side = 32;
-var canvasHeight = 25;//*side
+var canvasHeight = 15;//*side
 var canvasWidth = 25;//*side
 var fogRadius = 50;
 var players, obstacles, energies, golds;
 var gameStarted = false;
 var gameOver = false;
+var onSpace = false;
 var playerX;
 var playerY;
 var playerHasGold = false;
@@ -25,32 +26,47 @@ var bases = [{ x: 0, y: 0, color: 'red' },
 // }
 function setup() {
     createCanvas(side * canvasWidth, side * canvasHeight);
+    noStroke()
 }
 
 function draw() {
-    if (gameOver) {
-        GameOver()
-        // background("#acacac");
-        // textSize(58);
-        // text('GAME OVER', 30, 60);
-        // textSize(28);
-        // text('Energy is over', 30, 90);
-        // textSize(38);
-        // text('Your Score:' + playerScore, 30, 110);
-    }
-    else if (gameStarted) {
+    // if (gameOver) {
+    //     GameOver()
+    //     // background("#acacac");
+    //     // textSize(58);
+    //     // text('GAME OVER', 30, 60);
+    //     // textSize(28);
+    //     // text('Energy is over', 30, 90);
+    //     // textSize(38);
+    //     // text('Your Score:' + playerScore, 30, 110);
+    // }
+    if (gameStarted) {
         background('#acacac'); // Clear the screen
         drawPlayer(); // Draw the player
 
         drawResources(); // Draw the resources
         // WAR FOG
-        fill(0);
+        fill('#191919');
         rect(0, 0, playerX - fogRadius, canvasHeight * side);
         rect(0, 0, canvasWidth * side, playerY - fogRadius);
         rect(playerX + side + fogRadius, 0, canvasWidth * side, canvasHeight * side);
         rect(0, playerY + side + fogRadius, canvasWidth * side, canvasHeight * side);
 
-
+        var eng = Math.floor(playerEnergy);
+        energyP.innerHTML = 'Energy:' + eng;
+        
+        if (golds.length <= 0) {
+            GameOver();
+            return;
+        }
+        if (playerEnergy <= 0.1) {
+            playerEnergy=0;
+            background("#acacac");
+            fill(0);
+            textSize(38);
+            text('Your energy is over', 30, 160);
+            return;
+        }
         // Add elses in this if contruction to lock diagonal movement
         //________________________RIGHT__________________   
         if ((keyIsDown(RIGHT_ARROW) || keyIsDown(68)) && playerX < (width - side)) {
@@ -72,7 +88,6 @@ function draw() {
                 var coords = energies[i];
                 if (Collision_right(coords)) {
                     ++playerEnergy;
-                    energyP.innerHTML = 'Energy:' + playerEnergy;
                     energies.splice(i, 1);
                     socket.emit('splice Energy', i);
                 }
@@ -94,8 +109,9 @@ function draw() {
                     }
                 }
             }
+            playerEnergy -= 0.01;
             playerX += side / 8;
-            socket.emit('move', { x: playerX, y: playerY, color: config.color, hasGold: playerHasGold });
+            socket.emit('move', { x: playerX, y: playerY, color: config.color, hasGold: playerHasGold, energy: Math.floor(playerEnergy), score: playerScore });
         }
         //__________________LEFT_____________________
         if ((keyIsDown(LEFT_ARROW) || keyIsDown(65)) && playerX > 0) {
@@ -117,7 +133,6 @@ function draw() {
                 var coords = energies[i];
                 if (Collision_left(coords)) {
                     ++playerEnergy;
-                    energyP.innerHTML = 'Energy:' + playerEnergy;
                     energies.splice(i, 1);
                     socket.emit('splice Energy', i);
                 }
@@ -139,9 +154,9 @@ function draw() {
                     }
                 }
             }
-
+            playerEnergy -= 0.01;
             playerX -= side / 8;
-            socket.emit('move', { x: playerX, y: playerY, color: config.color, hasGold: playerHasGold });
+            socket.emit('move', { x: playerX, y: playerY, color: config.color, hasGold: playerHasGold, energy: Math.floor(playerEnergy), score: playerScore });
         }
         //____________________________UP_______________________
         if ((keyIsDown(UP_ARROW) || keyIsDown(87)) && playerY > 0) {
@@ -163,7 +178,6 @@ function draw() {
                 var coords = energies[i];
                 if (Collision_up(coords)) {
                     ++playerEnergy;
-                    energyP.innerHTML = 'Energy:' + playerEnergy;
                     energies.splice(i, 1);
                     socket.emit('splice Energy', i);
                 }
@@ -185,8 +199,9 @@ function draw() {
                     }
                 }
             }
+            playerEnergy -= 0.01;
             playerY -= side / 8;
-            socket.emit('move', { x: playerX, y: playerY, color: config.color, hasGold: playerHasGold });
+            socket.emit('move', { x: playerX, y: playerY, color: config.color, hasGold: playerHasGold, energy: Math.floor(playerEnergy), score: playerScore });
         }
         //_________________________________DOWN_____________________________
         if ((keyIsDown(DOWN_ARROW) || keyIsDown(83)) && playerY < (height - side)) {
@@ -208,7 +223,6 @@ function draw() {
                 var coords = energies[i];
                 if (Collision_down(coords)) {
                     ++playerEnergy;
-                    energyP.innerHTML = 'Energy:' + playerEnergy;
                     energies.splice(i, 1);
                     socket.emit('splice Energy', i);
                 }
@@ -230,27 +244,35 @@ function draw() {
                     }
                 }
             }
+            playerEnergy -= 0.01;
             playerY += side / 8;
-            socket.emit('move', { x: playerX, y: playerY, color: config.color, hasGold: playerHasGold });
+            socket.emit('move', { x: playerX, y: playerY, color: config.color, hasGold: playerHasGold, energy: Math.floor(playerEnergy), score: playerScore });
         }
-    }
+
+
+    }//game started
     else {
         background("#acacac");
         textSize(38);
         text('Wainting for players to join the game', 30, 60);
     }
+    // if (noSpace) {
+    //     background("#acacac");
+    //     textSize(38);
+    //     text('No space left, please wait until the next session', 30, 60);
+    // }
 }//draw end
-setInterval(function () {
-    if (playerEnergy > 1) {
-        --playerEnergy;
-        energyP.innerHTML = "Energy:" + playerEnergy;
-    }
-    else if (playerEnergy <= 1) {
-        --playerEnergy;
-        energyP.innerHTML = "Energy:" + playerEnergy;
-        gameOver = true;
-    }
-}, 10000);
+// setInterval(function () {
+//     if (playerEnergy > 1) {
+//         --playerEnergy;
+//         energyP.innerHTML = "Energy:" + playerEnergy;
+//     }
+//     else if (playerEnergy <= 1) {
+//         --playerEnergy;
+//         energyP.innerHTML = "Energy:" + playerEnergy;
+//         gameOver = true;
+//     }
+// }, 10000);
 
 
 socket.on('game started', function (data) {
@@ -276,3 +298,6 @@ socket.on('main data', function (data) {
     obstacles = data.obstacles;
     players = data.players;
 });
+socket.on('no space', function () {
+    var onSpace = true;
+})

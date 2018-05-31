@@ -144,21 +144,36 @@ function GameOver() {
     fill(0);
     textSize(58);
     text('GAME OVER', 60, 50);
+
+    textSize(30);
     fill("red");
-    textSize(38);
-    text('RED PLAYER. Score: ' + players[0].score + '; Energy: ' + players[0].energy, 30, 90);
+    text('RED PLAYER.         Score: ' + players[0].score + '; Energy: ' + players[0].energy, 30, 100);
 
     fill("green");
-    textSize(38);
-    text('GREEN PLAYER. Score: ' + players[1].score + '; Energy: ' + players[1].energy, 30, 140);
+    text('GREEN PLAYER.    Score: ' + players[1].score + '; Energy: ' + players[1].energy, 30, 140);
 
     fill("blue");
-    textSize(38);
-    text('BLUE PLAYER. Score: ' + players[2].score + '; Energy: ' + players[2].energy, 30, 180);
+    text('BLUE PLAYER.    8   Score: ' + players[2].score + '; Energy: ' + players[2].energy, 30, 180);
 
     fill("yellow");
-    textSize(38);
-    text('YELLOW PLAYER. Score: ' + players[3].score + '; Energy: ' + players[3].energy, 30, 240);
+    text('YELLOW PLAYER. Score: ' + players[3].score + '; Energy: ' + players[3].energy, 30, 220);
 
+var index = GetTheWinnerIndex();
+    fill('0');
+    textSize(48);
+    text('The Winner Is '+players[index].color+' Player',20,300)
 
 }
+function GetTheWinnerIndex(){
+    var scores =[];
+    for(var player of players){
+        scores.push(player.score);
+    }
+    var max = Math.max(...scores);
+    for(var i in players){
+        if(players[i].score == max){
+            return i;
+        }
+    }
+}
+//aaa.split(',').map(Number);

@@ -6,7 +6,11 @@ var io = require('socket.io')(server);
 var port = process.env.PORT || 3000;
 
 var side = 32;
-var width = 25, height = 25;
+var width = 25, height = 15;
+
+var obstaclesTokos = 3;
+var goldTokos = 2;
+var energyTokos = 3;
 
 var Players = [
     { x: 2 * side, y: 0, color: "red", hasGold: false, energy: 10, score: 0 },
@@ -21,9 +25,9 @@ var EnergyArr = [];
 var ObstalceArr = [];
 var BaseArr = [];
 
-var goldCount = 15;
-var energyCount = 10;
-var obstacleCount = 20;
+var obstacleCount = width * height * obstaclesTokos / 100;
+var goldCount = width * height * goldTokos / 100;
+var energyCount = width * height * energyTokos / 100;
 
 app.use(express.static('public'));
 
@@ -38,17 +42,20 @@ server.listen(port, function () {
 var playerColorCounter = 0;
 
 io.on('connection', function (socket) {
-
-    if (playerColorCounter != 4)
-        socket.emit('config data', Players[playerColorCounter++]);
-    else
+    if(playerColorCounter==1){
+        NewGame();
+    }
+    if (playerColorCounter < 4)
+    socket.emit('config data', Players[playerColorCounter]);
+    else{
         socket.emit('no space', 'No space left, please wait until the next session');
+    }
+    ++playerColorCounter;
 
     if (playerColorCounter == 4) {
         startGame();
         console.log("GAME STARTED");
     }
-
     console.log("New user connected, playerCount: " + playerColorCounter);
 
     socket.on('move', function (data) {
@@ -67,6 +74,7 @@ io.on('connection', function (socket) {
 
     socket.on('disconnect', function () {
         playerColorCounter--;
+        console.log('player disconnected; playerCount:'+playerColorCounter);
     });
 
     socket.on('splice gold', function (index) {
@@ -79,7 +87,9 @@ io.on('connection', function (socket) {
 });
 
 function startGame() {
+    if(allCoordinates.length ==0){
     generateMap();
+    }
     io.sockets.emit('game started', {
         golds: GoldArr,
         energies: EnergyArr,
@@ -115,7 +125,21 @@ function generateMap() {
 function random(max) {
     return Math.floor(Math.random() * max);
 }
-
+function NewGame(){
+    var Players = [
+        { x: 2 * side, y: 0, color: "red", hasGold: false, energy: 10, score: 0 },
+        { x: 2 * side, y: (height - 1) * side, color: "blue", hasGold: false, energy: 10, score: 0 },
+        { x: (width - 3) * side, y: 0, color: "green", hasGold: false, energy: 10, score: 0 },
+        { x: (width - 3) * side, y: (height - 1) * side, color: "yellow", hasGold: false, energy: 10, score: 0 }
+    ];
+    
+    var allCoordinates = [];
+    var GoldArr = [];
+    var EnergyArr = [];
+    var ObstalceArr = [];
+    var BaseArr = [];
+    
+}
 
 
 
