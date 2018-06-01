@@ -147,13 +147,13 @@ function GameOver() {
 
     textSize(30);
     fill("red");
-    text('RED PLAYER.         Score: ' + players[0].score + '; Energy: ' + players[0].energy, 30, 100);
+    text('RED PLAYER.        Score: ' + players[0].score + '; Energy: ' + players[0].energy, 30, 100);
 
     fill("green");
-    text('GREEN PLAYER.    Score: ' + players[1].score + '; Energy: ' + players[1].energy, 30, 140);
+    text('GREEN PLAYER.   Score: ' + players[1].score + '; Energy: ' + players[1].energy, 30, 140);
 
     fill("blue");
-    text('BLUE PLAYER.    8   Score: ' + players[2].score + '; Energy: ' + players[2].energy, 30, 180);
+    text('BLUE PLAYER.      Score: ' + players[2].score + '; Energy: ' + players[2].energy, 30, 180);
 
     fill("yellow");
     text('YELLOW PLAYER. Score: ' + players[3].score + '; Energy: ' + players[3].energy, 30, 220);

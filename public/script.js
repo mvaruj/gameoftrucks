@@ -1,7 +1,7 @@
 var socket = io();
 var config = {};
 
-//var playerName = prompt("Choose a username");
+var playerName = prompt("Choose a username");
 var side = 32;
 var canvasHeight = 15;//*side
 var canvasWidth = 25;//*side
@@ -254,7 +254,7 @@ function draw() {
     else {
         background("#acacac");
         textSize(38);
-        text('Wainting for players to join the game', 30, 60);
+        text('Wainting for players to join the game or no space', 30, 60);
     }
     // if (noSpace) {
     //     background("#acacac");

@@ -42,12 +42,12 @@ server.listen(port, function () {
 var playerColorCounter = 0;
 
 io.on('connection', function (socket) {
-    if(playerColorCounter==1){
+    if (playerColorCounter == 0) {
         NewGame();
     }
     if (playerColorCounter < 4)
-    socket.emit('config data', Players[playerColorCounter]);
-    else{
+        socket.emit('config data', Players[playerColorCounter]);
+    else {
         socket.emit('no space', 'No space left, please wait until the next session');
     }
     ++playerColorCounter;
@@ -74,7 +74,7 @@ io.on('connection', function (socket) {
 
     socket.on('disconnect', function () {
         playerColorCounter--;
-        console.log('player disconnected; playerCount:'+playerColorCounter);
+        console.log('player disconnected; playerCount:' + playerColorCounter);
     });
 
     socket.on('splice gold', function (index) {
@@ -87,8 +87,8 @@ io.on('connection', function (socket) {
 });
 
 function startGame() {
-    if(allCoordinates.length ==0){
-    generateMap();
+    if (allCoordinates.length == 0) {
+        generateMap();
     }
     io.sockets.emit('game started', {
         golds: GoldArr,
@@ -125,21 +125,22 @@ function generateMap() {
 function random(max) {
     return Math.floor(Math.random() * max);
 }
-function NewGame(){
-    var Players = [
+function NewGame() {
+    Players = [
         { x: 2 * side, y: 0, color: "red", hasGold: false, energy: 10, score: 0 },
         { x: 2 * side, y: (height - 1) * side, color: "blue", hasGold: false, energy: 10, score: 0 },
         { x: (width - 3) * side, y: 0, color: "green", hasGold: false, energy: 10, score: 0 },
         { x: (width - 3) * side, y: (height - 1) * side, color: "yellow", hasGold: false, energy: 10, score: 0 }
     ];
-    
-    var allCoordinates = [];
-    var GoldArr = [];
-    var EnergyArr = [];
-    var ObstalceArr = [];
-    var BaseArr = [];
-    
-}
+
+    allCoordinates = [];
+    GoldArr = [];
+    EnergyArr = [];
+    ObstalceArr = [];
+    BaseArr = [];
+//     socket.emit('New game');
+
+ }
 
 
 
