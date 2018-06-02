@@ -1,7 +1,7 @@
 var socket = io();
 var config = {};
 
-var playerName = prompt("Choose a username");
+var playerName = ""//= prompt("Choose a username");
 var side = 32;
 var canvasHeight = 15;//*side
 var canvasWidth = 25;//*side
@@ -13,13 +13,14 @@ var onSpace = false;
 var playerX;
 var playerY;
 var playerHasGold = false;
-
-var scoreP = document.getElementById("scoreP");
-var energyP = document.getElementById("energyP");
 var bases = [{ x: 0, y: 0, color: 'red' },
 { x: (canvasWidth - 2) * side, y: 0, color: 'green' },
 { x: 0, y: (canvasHeight - 2) * side, color: "blue" },
 { x: (canvasWidth - 2) * side, y: (canvasHeight - 2) * side, color: "yellow" }];
+
+var scoreP = document.getElementById("scoreP");
+var energyP = document.getElementById("energyP");
+var eventsDiv = document.getElementById("events");
 
 // if (gameStarted) {
 //     alert("You Are " + config.color);
@@ -54,13 +55,13 @@ function draw() {
 
         var eng = Math.floor(playerEnergy);
         energyP.innerHTML = 'Energy:' + eng;
-        
+
         if (golds.length <= 0) {
             GameOver();
             return;
         }
         if (playerEnergy <= 0.1) {
-            playerEnergy=0;
+            playerEnergy = 0;
             background("#acacac");
             fill(0);
             textSize(38);
@@ -77,8 +78,6 @@ function draw() {
                 var coords = golds[i];
                 if (Collision_right(coords)) {
                     if (playerHasGold) return;
-                    ++playerScore;
-                    scoreP.innerHTML = 'Score:' + playerScore;
                     playerHasGold = true;
                     golds.splice(i, 1);
                     socket.emit('splice gold', i);
@@ -111,7 +110,7 @@ function draw() {
             }
             playerEnergy -= 0.01;
             playerX += side / 8;
-            socket.emit('move', { x: playerX, y: playerY, color: config.color, hasGold: playerHasGold, energy: Math.floor(playerEnergy), score: playerScore });
+            socket.emit('move', { nick: playerName, x: playerX, y: playerY, color: config.color, hasGold: playerHasGold, energy: Math.floor(playerEnergy), score: playerScore });
         }
         //__________________LEFT_____________________
         if ((keyIsDown(LEFT_ARROW) || keyIsDown(65)) && playerX > 0) {
@@ -122,8 +121,6 @@ function draw() {
                 var coords = golds[i];
                 if (Collision_left(coords)) {
                     if (playerHasGold) return;
-                    ++playerScore;
-                    scoreP.innerHTML = 'Score:' + playerScore;
                     playerHasGold = true;
                     golds.splice(i, 1);
                     socket.emit('splice gold', i);
@@ -156,7 +153,7 @@ function draw() {
             }
             playerEnergy -= 0.01;
             playerX -= side / 8;
-            socket.emit('move', { x: playerX, y: playerY, color: config.color, hasGold: playerHasGold, energy: Math.floor(playerEnergy), score: playerScore });
+            socket.emit('move', { nick: playerName, x: playerX, y: playerY, color: config.color, hasGold: playerHasGold, energy: Math.floor(playerEnergy), score: playerScore });
         }
         //____________________________UP_______________________
         if ((keyIsDown(UP_ARROW) || keyIsDown(87)) && playerY > 0) {
@@ -167,8 +164,6 @@ function draw() {
                 var coords = golds[i];
                 if (Collision_up(coords)) {
                     if (playerHasGold) return;
-                    ++playerScore;
-                    scoreP.innerHTML = 'Score:' + playerScore;
                     playerHasGold = true;
                     golds.splice(i, 1);
                     socket.emit('splice gold', i);
@@ -201,7 +196,7 @@ function draw() {
             }
             playerEnergy -= 0.01;
             playerY -= side / 8;
-            socket.emit('move', { x: playerX, y: playerY, color: config.color, hasGold: playerHasGold, energy: Math.floor(playerEnergy), score: playerScore });
+            socket.emit('move', { nick: playerName, x: playerX, y: playerY, color: config.color, hasGold: playerHasGold, energy: Math.floor(playerEnergy), score: playerScore });
         }
         //_________________________________DOWN_____________________________
         if ((keyIsDown(DOWN_ARROW) || keyIsDown(83)) && playerY < (height - side)) {
@@ -212,8 +207,6 @@ function draw() {
                 var coords = golds[i];
                 if (Collision_down(coords)) {
                     if (playerHasGold) return;
-                    ++playerScore;
-                    scoreP.innerHTML = 'Score:' + playerScore;
                     playerHasGold = true;
                     golds.splice(i, 1);
                     socket.emit('splice gold', i);
@@ -233,6 +226,7 @@ function draw() {
                         playerHasGold = false;
                         ++playerScore;
                         scoreP.innerHTML = 'Score:' + playerScore;
+                        Gold_In_Base(playerScore);
                     }
                     return;
                 }
@@ -246,7 +240,7 @@ function draw() {
             }
             playerEnergy -= 0.01;
             playerY += side / 8;
-            socket.emit('move', { x: playerX, y: playerY, color: config.color, hasGold: playerHasGold, energy: Math.floor(playerEnergy), score: playerScore });
+            socket.emit('move', { nick: playerName, x: playerX, y: playerY, color: config.color, hasGold: playerHasGold, energy: Math.floor(playerEnergy), score: playerScore });
         }
 
 
@@ -281,6 +275,7 @@ socket.on('game started', function (data) {
     energies = data.energies;
     obstacles = data.obstacles;
     players = data.players;
+    Game_Started()
 });
 
 socket.on('config data', function (data) {
@@ -290,6 +285,12 @@ socket.on('config data', function (data) {
     playerColor = config.color;
     playerScore = config.score;
     playerEnergy = config.energy;
+    while (playerName === "" || playerName === null) {
+        playerName = prompt("Choose a username");
+    }
+    config.nick = playerName;
+    alert('You are '+playerColor)
+    socket.emit('player has join', config)
 });
 
 socket.on('main data', function (data) {
@@ -300,4 +301,7 @@ socket.on('main data', function (data) {
 });
 socket.on('no space', function () {
     var onSpace = true;
-})
+});
+socket.on('join message',function (data){
+    Join_Msg(data)
+});

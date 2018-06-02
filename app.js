@@ -13,10 +13,10 @@ var goldTokos = 2;
 var energyTokos = 3;
 
 var Players = [
-    { x: 2 * side, y: 0, color: "red", hasGold: false, energy: 10, score: 0 },
-    { x: 2 * side, y: (height - 1) * side, color: "blue", hasGold: false, energy: 10, score: 0 },
-    { x: (width - 3) * side, y: 0, color: "green", hasGold: false, energy: 10, score: 0 },
-    { x: (width - 3) * side, y: (height - 1) * side, color: "yellow", hasGold: false, energy: 10, score: 0 }
+    { nick: "", x: 2 * side, y: 0, color: "red", hasGold: false, energy: 10, score: 0 },
+    { nick: "", x: 2 * side, y: (height - 1) * side, color: "blue", hasGold: false, energy: 10, score: 0 },
+    { nick: "", x: (width - 3) * side, y: 0, color: "green", hasGold: false, energy: 10, score: 0 },
+    { nick: "", x: (width - 3) * side, y: (height - 1) * side, color: "yellow", hasGold: false, energy: 10, score: 0 }
 ];
 
 var allCoordinates = [];
@@ -70,6 +70,7 @@ io.on('connection', function (socket) {
             obstacles: ObstalceArr,
             players: Players
         });
+
     });
 
     socket.on('disconnect', function () {
@@ -83,6 +84,14 @@ io.on('connection', function (socket) {
     socket.on('splice Energy', function (index) {
         EnergyArr.splice(index, 1);
     });
+    socket.on('player has join',function (player){
+        for(var i in Players){
+            if(Players[i].color == player.color){
+                Players[i] = player;
+            }
+        }
+        io.sockets.emit('join message',player);
+    })
 
 });
 
@@ -138,9 +147,9 @@ function NewGame() {
     EnergyArr = [];
     ObstalceArr = [];
     BaseArr = [];
-//     socket.emit('New game');
+    //     socket.emit('New game');
 
- }
+}
 
 
 

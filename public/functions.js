@@ -147,21 +147,21 @@ function GameOver() {
 
     textSize(30);
     fill("red");
-    text('RED PLAYER.        Score: ' + players[0].score + '; Energy: ' + players[0].energy, 30, 100);
+    text(players[0].nick+' Score: ' + players[0].score + '; Energy: ' + players[0].energy, 30, 100);
 
     fill("green");
-    text('GREEN PLAYER.   Score: ' + players[1].score + '; Energy: ' + players[1].energy, 30, 140);
+    text(players[1].nick+' Score: ' + players[1].score + '; Energy: ' + players[1].energy, 30, 140);
 
     fill("blue");
-    text('BLUE PLAYER.      Score: ' + players[2].score + '; Energy: ' + players[2].energy, 30, 180);
+    text(players[2].nick+'  Score: ' + players[2].score + '; Energy: ' + players[2].energy, 30, 180);
 
     fill("yellow");
-    text('YELLOW PLAYER. Score: ' + players[3].score + '; Energy: ' + players[3].energy, 30, 220);
+    text(players[3].nick+' Score: ' + players[3].score + '; Energy: ' + players[3].energy, 30, 220);
 
 var index = GetTheWinnerIndex();
     fill('0');
     textSize(48);
-    text('The Winner Is '+players[index].color+' Player',20,300)
+    text('The Winner Is '+players[index].nick+' Player',20,300)
 
 }
 function GetTheWinnerIndex(){
@@ -177,3 +177,23 @@ function GetTheWinnerIndex(){
     }
 }
 //aaa.split(',').map(Number);
+function Join_Msg(player){
+    var p = document.createElement("p");
+    p.innerHTML= player.nick + ' has joined';
+    eventsDiv.appendChild(p);
+    p.style.color = player.color;
+}
+function Gold_In_Base(score){
+    var p = document.createElement("p");
+    p.innerHTML= 'Gold has been moved to base';
+    eventsDiv.appendChild(p);
+    var p = document.createElement("p");
+    p.innerHTML= 'Your score is now '+score;
+    eventsDiv.appendChild(p);
+}
+function Game_Started(){
+    var p = document.createElement("p");
+    p.innerHTML= 'The game started!!!';
+    eventsDiv.appendChild(p);
+    p.style.fontSize = '20px';
+}
