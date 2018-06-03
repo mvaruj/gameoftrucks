@@ -24,7 +24,7 @@ var GoldArr = [];
 var EnergyArr = [];
 var ObstalceArr = [];
 var BaseArr = [];
-
+var messages = []
 var obstacleCount = width * height * obstaclesTokos / 100;
 var goldCount = width * height * goldTokos / 100;
 var energyCount = width * height * energyTokos / 100;
@@ -42,6 +42,17 @@ server.listen(port, function () {
 var playerColorCounter = 0;
 
 io.on('connection', function (socket) {
+    //chat--------
+    for (var i in messages) {
+        io.sockets.emit("display message", messages[i]);
+    }
+    socket.on("send message", function (data) {
+        messages.push(data.val);
+        io.sockets.emit("display message", data);
+    })
+
+    //game-------
+
     if (playerColorCounter == 0) {
         NewGame();
     }
@@ -50,6 +61,14 @@ io.on('connection', function (socket) {
     else {
         socket.emit('no space', 'No space left, please wait until the next session');
     }
+    socket.on('player has join', function (player) {
+        for (var i in Players) {
+            if (Players[i].color == player.color) {
+                Players[i] = player;
+            }
+        }
+        io.sockets.emit('join message', player);
+    })
     ++playerColorCounter;
 
     if (playerColorCounter == 4) {
@@ -84,14 +103,6 @@ io.on('connection', function (socket) {
     socket.on('splice Energy', function (index) {
         EnergyArr.splice(index, 1);
     });
-    socket.on('player has join',function (player){
-        for(var i in Players){
-            if(Players[i].color == player.color){
-                Players[i] = player;
-            }
-        }
-        io.sockets.emit('join message',player);
-    })
 
 });
 
@@ -147,6 +158,7 @@ function NewGame() {
     EnergyArr = [];
     ObstalceArr = [];
     BaseArr = [];
+    messages = [];
     //     socket.emit('New game');
 
 }
